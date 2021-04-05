@@ -19,24 +19,7 @@ function Pipe(config) {
         image(this.bottomImg, this.x, height - this.bottom, this.w, this.bottom)
 
         // Top pipe
-        image(this.topImg, this.x, 0, this.w, this.top)
-        //rect(this.x, 0, this.w, this.top)
-
-        
-        //rect(this.x, height - this.bottom, this.w, this.bottom)
-
-        // Top pipe's opening which is a bit wider than the full pipe's width
-        //let offset = (this.baseWidth - this.w) / 2;
-        
-        // fill('green')
-
-        // if (this.highlight)
-        //     fill('red')
-
-        //rect(this.x - offset, this.top - this.baseHeight, this.baseWidth, this.baseHeight);
-        
-        // Bottom pipe's opening
-        //rect(this.x - offset, height - this.bottom, this.baseWidth, this.baseHeight);
+        image(this.topImg, this.x, 0, this.w, this.top);
     }
 
     this.offscreen = function() {
@@ -44,13 +27,15 @@ function Pipe(config) {
     }
 
     this.hits = function(bird) {
+        if (bird.y >= height - bird.height) {
+            this.highlight = true;
+            return true;
+        }
         if ((bird.y - 5) <= this.top || (bird.y) >= height - this.bottom) {
             if (bird.x >= this.x && bird.x <= this.x + this.w) {
                 this.highlight = true;
-                console.log('bird.x: '+bird.x+' , pipe.x: '+this.x);
+                console.log('HIT -- bird.x: '+bird.x+' , pipe.x: '+this.x);
                 console.log('bird.y: '+bird.y+' , pipe.y: '+this.top);
-
-                debugger;
                 return true;
             }
         }

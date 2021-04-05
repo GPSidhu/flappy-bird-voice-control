@@ -6,29 +6,73 @@
 
     <style>
       canvas {
-        display: flex;
         margin: auto;
         border: 5px solid black;
-        width: 70vW;
+        display: flex;
       }
+      body {
+        background-color: lightgray;
+        font-size: 20px;
+        color: #fff;
+        grid-template-columns: auto auto;
+        grid-gap: 10px;
+      }
+      .game-container {
+        background-color: black;
+        border: 1px solid black;
+        display: flex;
+        flex-direction: row;
+        position: relative;
+      }
+      .game-container .title {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+      }
+      .game-container .panel {
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: 1px dotted black;
+        max-width: 25vW;
+        height: 500;
+      }
+      .game-container .panel input {
+        width: 48px;
+        height: 48px;
+      }
+      .model-container {
+        border: 1px solid black;
+      }
+      
     </style>
   </head>
   <body>
-    <div>Flappy Bird</div>
-    <div>Speech to Text</div>
-    <button id="up" onmousedown="collect(0)" onmouseup="collect(null)">Up</button>
-    <button id="right" onmousedown="collect(1)" onmouseup="collect(null)">Right</button>
-    <button id="noise" onmousedown="collect(2)" onmouseup="collect(null)">Noise</button>
-    <br/><br/>
-    <button id="train" onclick="train()">Train</button>
-    <br/><br/>
-    <button id="listen" onclick="listen()">Listen</button>
-    <input type="range" id="output" min="0" max="10" step="0.1">
-    <div id="console"></div>
+    <div class="game-container" id="game-container">
+      
+      <div class="panel">
+        <h1 id="score"></h1>
+        <input type="image" id="reload" src="images/reload.png" />
+        <h2 id="display-msg"></h2>
+        <!-- <button style="background: url('images/reload.png')" ></button> -->
+      </div>
+    </div>
+    <div class="model-container">
+      <div>Train the model</div>
+      <button id="up" onmousedown="collect(0)" onmouseup="collect(null)">Up</button>
+      <button id="right" onmousedown="collect(1)" onmouseup="collect(null)">Right</button>
+      <button id="noise" onmousedown="collect(2)" onmouseup="collect(null)">Noise</button>
+      <br/><br/>
+      <button id="train" onclick="train()">Train</button>
+      <br/><br/>
+      <button id="listen" onclick="listen()">Listen</button>
+      <input type="range" id="output" min="0" max="10" step="0.1">
+      <div id="console"></div>
+    </div>
 
     <script src="index.js" type="text/javascript"></script>
-    <!-- <script src="worker.js" type="text/javascript"></script> -->
-    <!-- <script src="sketch.js" type="text/javascript"></script> -->
     <script src="./objects/tree.js" type="text/javascript"></script>
     <script src="./objects/background.js" type="text/javascript"></script>
     <script src="bird.js" type="text/javascript"></script>

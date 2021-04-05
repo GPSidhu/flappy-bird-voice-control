@@ -4,14 +4,25 @@ var pipes = [], pipeConfig;
 let gameBg, gameConfig;
 let pause = false;
 let gameIsEnded = false;
-let gameOver;
 let playButton;
+let score = 0;
+
+var scoreCounter = setInterval(incrementScore, 1000);
+function incrementScore() {
+    if (!pause && !gameIsEnded)
+        score += 10
+    document.getElementById("score").innerHTML = `Score: ${score}`;
+}
+
+document.getElementById("reload").addEventListener("click", function() {
+    reset();
+});
 
 function preload() {
     gameConfig = {
         background: loadImage('./images/gameBg.jpeg'), 
         canvas : {
-            height: 600,
+            height: 500,
             width: 600,
         }
     }
@@ -29,16 +40,13 @@ function preload() {
         }
     }
     bgImg = loadImage('./images/gameBg.jpeg')
-    // birdGif = loadImage('./images/bird.gif')
-    // birdImg = loadImage('./images/bird.png')
 }
 
 function setup() {
-    createCanvas(gameConfig.canvas.width, gameConfig.canvas.height);
-    //removeElements();
-    playButton = createButton('Play');
-    //playButton.position(width/2, height/2);
-    playButton.mousePressed(reset);
+    let pc = document.getElementById('game-container')
+    gameConfig.canvas.width = Math.floor(pc.clientWidth * 0.5)
+    let cnv = createCanvas(gameConfig.canvas.width, gameConfig.canvas.height);
+    cnv.parent("game-container");
     reset();
 }
 
@@ -91,22 +99,14 @@ function togglePause() {
 }
 
 function showGameOver() {
-    gameOver = createDiv('*********************** <br/>'+
-                                    '***** Game Over!!! ***** <br/>' +
-                                    '*********************** <br/>' +
-                                    '***** Score: 120001 *****<br/>' +
-                                    '***********************');
-    gameOver.style('color', 'black');
-    gameOver.position(width/2 - 50, 0);
+    clearInterval(scoreCounter);
+    document.getElementById('display-msg').innerHTML = "Game Over!!!";
 }
 
 function reset() {
     pause = false;
     gameIsEnded = false;
     pipes = [];
-    //removeElements();
-    if (gameOver)
-        gameOver.hide();
 
     bird = new Bird(birdConfig);
     gameBg = new Background(gameConfig);
