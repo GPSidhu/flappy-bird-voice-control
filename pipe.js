@@ -1,0 +1,53 @@
+function Pipe() {
+    this.minHeight = 0;
+    this.top = random(100, height/2);
+    this.bottom = random(100, height/2 - 100);
+    this.x = width;
+    this.w = 90;
+    this.speed = 2;
+    this.baseWidth = 100;
+    this.baseHeight = 30;
+    this.show = function() {
+        fill('lightgreen')
+        if (this.highlight)
+            fill('red')
+        
+        // Top pipe 
+        rect(this.x, 0, this.w, this.top)
+
+        // Bottom pipe
+        rect(this.x, height - this.bottom, this.w, this.bottom)
+
+        // Top pipe's opening which is a bit wider than the full pipe's width
+        let offset = (this.baseWidth - this.w) / 2;
+        
+        fill('green')
+
+        if (this.highlight)
+            fill('red')
+
+        rect(this.x - offset, this.top - this.baseHeight, this.baseWidth, this.baseHeight);
+        
+        // Bottom pipe's opening
+        rect(this.x - offset, height - this.bottom, this.baseWidth, this.baseHeight);
+    }
+
+    this.offscreen = function() {
+        return this.x < -this.w
+    }
+
+    this.hits = function(bird) {
+        if ((bird.y - bird.height/2) < this.top || (bird.y + bird.height/2) > height - this.bottom) {
+            if ((bird.x + bird.width) > this.x && (bird.x + bird.width) < this.x + this.w)
+                this.highlight = true;  
+                return true;
+        }
+        this.highlight = false;
+        return false;
+    }
+
+    this.update = function(pause) {
+        if (!pause)
+            this.x -= this.speed;
+    }
+}
