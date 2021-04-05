@@ -1,4 +1,4 @@
-function Bird(birdImg, birdGif) {
+function Bird(config) {
     this.y = height/2;
     this.x = width/2 - 100;
     this.gravity = 0.7;
@@ -7,14 +7,22 @@ function Bird(birdImg, birdGif) {
     this.hasHit = false;
     this.height = 64;
     this.width = 64;
-    this.img = birdImg;
+    this.img = config.image;
     this.gif = birdGif
 
-    this.show = function(pause) {
-        image(pause ? this.img : this.gif, this.x, this.y, this.width, this.height)
+    this.show = function(pause, isGameEnded) {
+        if (isGameEnded) {
+            tint(227, 173, 132);
+            image(this.img.dead, this.x, this.y, this.width, this.height)
+        }
+        else if (pause)
+            image(this.img.paused, this.x, this.y, this.width, this.height)
+        else
+            image(this.img.live, this.x, this.y, this.width, this.height)
     }
 
     this.up = function() {
+        console.log('up called')
         this.velocity += this.lift;
     }
 
@@ -32,8 +40,8 @@ function Bird(birdImg, birdGif) {
             this.velocity *= 0.9;
             this.y += this.velocity;
 
-            if (this.y > height - 200) {
-                this.y = height - 200 - this.height / 2;
+            if (this.y > height) {
+                this.y = height - this.height / 2;
                 this.velocity = 0;
             }
             if (this.y < 0) {

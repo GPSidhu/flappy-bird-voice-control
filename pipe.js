@@ -44,10 +44,15 @@ function Pipe(config) {
     }
 
     this.hits = function(bird) {
-        if ((bird.y - bird.height/2) < this.top || (bird.y + bird.height/2) > height - this.bottom) {
-            if ((bird.x + bird.width) > this.x && (bird.x + bird.width) < this.x + this.w)
-                this.highlight = true;  
+        if ((bird.y - 5) <= this.top || (bird.y) >= height - this.bottom) {
+            if (bird.x >= this.x && bird.x <= this.x + this.w) {
+                this.highlight = true;
+                console.log('bird.x: '+bird.x+' , pipe.x: '+this.x);
+                console.log('bird.y: '+bird.y+' , pipe.y: '+this.top);
+
+                debugger;
                 return true;
+            }
         }
         this.highlight = false;
         return false;

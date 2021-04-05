@@ -94,7 +94,8 @@ async function moveSlider(labelTensor) {
   console.log('label :  '+(label+'' === '0' ? 'up' : (label+'' === '1' ? 'right' : 'noise')))
   document.getElementById('console').textContent = label;
   if(label == 0)
-    bird.up()
+    debounce( bird.up, 1000)
+    //before.up();
     
   if (label == 2) {
     return;
@@ -130,4 +131,12 @@ async function moveSlider(labelTensor) {
   });
  }
 
-
+ const debounce = (func, delay) => {
+  let debounceTimer
+  return function() {
+      const context = this
+      const args = arguments
+          clearTimeout(debounceTimer)
+              debounceTimer = setTimeout(() => func.apply(context, args), delay)
+  }
+} 
