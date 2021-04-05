@@ -1,4 +1,4 @@
-function Pipe() {
+function Pipe(config) {
     this.minHeight = 0;
     this.top = random(100, height/2);
     this.bottom = random(100, height/2 - 100);
@@ -7,29 +7,36 @@ function Pipe() {
     this.speed = 2;
     this.baseWidth = 100;
     this.baseHeight = 30;
+    this.topImg = config.image.top;
+    this.bottomImg = config.image.bottom;
+
     this.show = function() {
         fill('lightgreen')
         if (this.highlight)
             fill('red')
         
-        // Top pipe 
-        rect(this.x, 0, this.w, this.top)
-
         // Bottom pipe
-        rect(this.x, height - this.bottom, this.w, this.bottom)
+        image(this.bottomImg, this.x, height - this.bottom, this.w, this.bottom)
+
+        // Top pipe
+        image(this.topImg, this.x, 0, this.w, this.top)
+        //rect(this.x, 0, this.w, this.top)
+
+        
+        //rect(this.x, height - this.bottom, this.w, this.bottom)
 
         // Top pipe's opening which is a bit wider than the full pipe's width
-        let offset = (this.baseWidth - this.w) / 2;
+        //let offset = (this.baseWidth - this.w) / 2;
         
-        fill('green')
+        // fill('green')
 
-        if (this.highlight)
-            fill('red')
+        // if (this.highlight)
+        //     fill('red')
 
-        rect(this.x - offset, this.top - this.baseHeight, this.baseWidth, this.baseHeight);
+        //rect(this.x - offset, this.top - this.baseHeight, this.baseWidth, this.baseHeight);
         
         // Bottom pipe's opening
-        rect(this.x - offset, height - this.bottom, this.baseWidth, this.baseHeight);
+        //rect(this.x - offset, height - this.bottom, this.baseWidth, this.baseHeight);
     }
 
     this.offscreen = function() {

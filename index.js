@@ -1,52 +1,60 @@
 var bird, birdImg, birdGif;
 var controller;
-var pipes = [];
-let gameBg;
-var treeImg;
-let trees = [];
+var pipes = [], pipeConfig; 
+let gameBg, gameConfig;
 let pause = false;
 
 function preload() {
-    treeImg = loadImage('./images/treePixel.jpeg')
+    gameConfig = {
+        background: loadImage('./images/gameBg.jpeg'), 
+        canvas : {
+            height: 600,
+            width: 600,
+        }
+    }
+    pipeConfig = {
+        image: {
+            top: loadImage('./images/topPipe.png'),
+            bottom: loadImage('./images/bottomPipe.png')
+        }   
+    }
+    bgImg = loadImage('./images/gameBg.jpeg')
     birdGif = loadImage('./images/bird.gif')
     birdImg = loadImage('./images/bird.png')
 }
 
 function setup() {
-    let canvas = {
-        height: 600,
-        width: 600
-    }
-    createCanvas(canvas.width, canvas.height);
+    createCanvas(gameConfig.canvas.width, gameConfig.canvas.height);
     bird = new Bird(birdImg, birdGif);
-    pipes.push(new Pipe());
-    //tree = new Tree(treeImg);
-    gameBg = new Background(treeImg);
+    gameBg = new Background(gameConfig);
 }
 
 function draw() {
         background(255);
         gameBg.render(pause);
-       // if (!bird.hasHit())
         bird.update(pause);
         bird.show(pause);
-        
-        if (frameCount % 100 === 0 && !pause)
-            pipes.push(new Pipe())
+        drawPipes();
+}
 
-        for (let i = pipes.length - 1; i >= 0; i--) {
-                pipes[i].show();
-                if (!pause) {
-                    pipes[i].update(pause);
-                    if (pipes[i].offscreen())
-                        pipes.splice(i, 1);
-        
-                    if (pipes[i].hits(bird)) {
-                        //togglePause()
-                        //pause = true;
-                    }
+function drawPipes() {
+    if (frameCount % 100 === 0 && !pause)
+    pipes.push(new Pipe(pipeConfig))
+
+    for (let i = pipes.length - 1; i >= 0; i--) {
+            pipes[i].show();
+            if (!pause) {
+                pipes[i].update(pause);
+                if (pipes[i].offscreen())
+                    pipes.splice(i, 1);
+
+                if (pipes[i].hits(bird)) {
+                    // to do - handle hit scenario
+                    //togglePause()
+                    //pause = true;
                 }
-        }
+            }
+    }
 }
 
 function keyPressed() {
