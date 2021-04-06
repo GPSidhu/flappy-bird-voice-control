@@ -1,9 +1,29 @@
 var recognizer;
 
+function predictWord() {
+  // Array of words that the recognizer is trained to recognize.
+  const words = recognizer.wordLabels();
+  recognizer.listen(({scores}) => {
+    // Turn scores into a list of (score,word) pairs.
+    scores = Array.from(scores).map((s, i) => ({score: s, word: words[i]}));
+    // Find the most probable word.
+    scores.sort((s1, s2) => s2.score - s1.score);
+    let predictedWord = scores[0].word;
+    
+    if (predictedWord === 'up')
+      bird.up();
+    else if (predictedWord === 'down')
+      bird.down();
+
+    document.querySelector('#console').textContent = scores[0].word;
+  }, {probabilityThreshold: 0.75});
+ }
+
 async function app() {
  recognizer = speechCommands.create('BROWSER_FFT');
  await recognizer.ensureModelLoaded();
- buildModel();
+ //predictWord();
+ //buildModel();
 }
 
 app();
@@ -94,8 +114,9 @@ async function moveSlider(labelTensor) {
   console.log('label :  '+(label+'' === '0' ? 'up' : (label+'' === '1' ? 'right' : 'noise')))
   document.getElementById('console').textContent = label;
   if(label == 0)
-    debounce( bird.up, 1000)
-    //before.up();
+    bird.up()
+    //debounce(bird.up, 1000)
+    //bird.up();
     
   if (label == 2) {
     return;
@@ -135,8 +156,7 @@ async function moveSlider(labelTensor) {
   let debounceTimer
   return function() {
       const context = this
-      const args = arguments
-          clearTimeout(debounceTimer)
-              debounceTimer = setTimeout(() => func.apply(context, args), delay)
+      clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(() => func.apply(context), delay)
   }
 } 

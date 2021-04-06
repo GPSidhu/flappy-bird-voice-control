@@ -1,7 +1,10 @@
 function Pipe(config) {
     this.minHeight = 0;
-    this.top = random(100, height/2);
+    this.minGap = 100; // minimum gap between top and bottom pipes
+    this.maxGap = 350; // maximum gap between top and bottom pipes
+    this.gap = random(this.minGap,  this.maxGap);
     this.bottom = random(100, height/2 - 100);
+    this.top = (height - this.bottom - this.gap); //random(100, height/2);
     this.x = width;
     this.w = 90;
     this.speed = 2;
@@ -9,13 +12,12 @@ function Pipe(config) {
     this.baseHeight = 30;
     this.topImg = config.image.top;
     this.bottomImg = config.image.bottom;
+    this.mode = config.gameConfig.mode;
+    
 
     this.show = function() {
-        fill('lightgreen')
-        if (this.highlight)
-            fill('red')
-        
         // Bottom pipe
+        //image(this.bottomImg, this.x, height - bH, this.w, bH);
         image(this.bottomImg, this.x, height - this.bottom, this.w, this.bottom)
 
         // Top pipe
@@ -27,19 +29,22 @@ function Pipe(config) {
     }
 
     this.hits = function(bird) {
+        if (this.mode === 'trial')
+            return false;
+
         if (bird.y >= height - bird.height) {
-            this.highlight = true;
+            //this.highlight = true;
             return true;
         }
-        if ((bird.y - 5) <= this.top || (bird.y) >= height - this.bottom) {
+        if ((bird.y + 10 <= this.top) || (bird.y + 48 >= height - this.bottom)) {
             if (bird.x >= this.x && bird.x <= this.x + this.w) {
-                this.highlight = true;
-                console.log('HIT -- bird.x: '+bird.x+' , pipe.x: '+this.x);
-                console.log('bird.y: '+bird.y+' , pipe.y: '+this.top);
+                //this.highlight = true;
+                console.log('HIT -- bird.x: ' + bird.x + ' , pipe.x: ' + this.x);
+                console.log('bird.y: ' + bird.y + ' , pipe.y: ' + this.top);
                 return true;
             }
         }
-        this.highlight = false;
+        //this.highlight = false;
         return false;
     }
 

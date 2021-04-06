@@ -2,21 +2,37 @@ var bird, birdImg, birdGif, birdConfig;
 var controller;
 var pipes = [], pipeConfig; 
 let gameBg, gameConfig;
-let pause = false;
-let gameIsEnded = false;
+let pause = true;
+let isGameOver = false;
+let onGameOverScreen = false;
 let playButton;
 let score = 0;
+let gameMode = 'action'; //'trial','action'
+let gameVersion = 1; //1 -> with gravity, 2 -> without gravity
+var scoreCounter;
 
-var scoreCounter = setInterval(incrementScore, 1000);
-function incrementScore() {
-    if (!pause && !gameIsEnded)
-        score += 10
-    document.getElementById("score").innerHTML = `Score: ${score}`;
-}
+const P_KEY = 80;
+const R_KEY = 82;
 
-document.getElementById("reload").addEventListener("click", function() {
-    reset();
+document.getElementById("play").addEventListener("click", (e) => {
+    let pauseBtn = document.getElementById('pause');
+    if (pauseBtn) {
+        pauseBtn.style.display = "block";
+        e.target.style.display = "none";
+    }
+    togglePause()
 });
+
+document.getElementById("pause").addEventListener("click", (e) => {
+    let playBtn = document.getElementById('play');
+    if (playBtn) {
+        playBtn.style.display = "block";
+        e.target.style.display = "none";
+    }
+    togglePause();
+});
+
+document.getElementById("reload").addEventListener("click", restartGame);
 
 function preload() {
     gameConfig = {
@@ -24,20 +40,24 @@ function preload() {
         canvas : {
             height: 500,
             width: 600,
-        }
+        },
+        mode: gameMode,
+        version: gameVersion
     }
     pipeConfig = {
         image: {
             top: loadImage('./images/topPipe.png'),
             bottom: loadImage('./images/bottomPipe.png')
-        }   
+        },
+        gameConfig: gameConfig
     }
     birdConfig = {
         image: {
             live: loadImage('./images/bird.gif'),
             paused: loadImage('./images/bird.png'),
             dead: loadImage('./images/birdDead.png')
-        }
+        },
+        gameConfig: gameConfig
     }
     bgImg = loadImage('./images/gameBg.jpeg')
 }
@@ -54,14 +74,15 @@ function draw() {
         background(255);
         gameBg.render(pause);
         //gameBg.update(pause); // to do - fill bg gap
-        if (gameIsEnded) {
+        if (isGameOver) {
             drawPipes();
-            bird.show(true, true);
-            setTimeout(() => showGameOver(), 1000);
+            bird.show(true /**pause */, true /**isGameOver */);
+            if (!onGameOverScreen)
+                showGameOver();
         } else {
             drawPipes();
             bird.update(pause);
-            bird.show(pause);
+            bird.show(pause, false);
         }
 }
 
@@ -71,43 +92,102 @@ function drawPipes() {
 
     for (let i = pipes.length - 1; i >= 0; i--) {
             pipes[i].show();
-            if (!pause && !gameIsEnded) {
+            if (!pause && !isGameOver) {
                 pipes[i].update(pause);
                 if (pipes[i].offscreen())
                     pipes.splice(i, 1);
 
                 if (pipes[i].hits(bird)) {
-                    console.log('hit')
-                    // to do - handle hit scenario
-                    //togglePause()
-                    //pause = true;
-                    gameIsEnded = true;
+                    console.log("Bird hit - game over!!!")
+                    isGameOver = true;
                 }
             }
     }
 }
 
 function keyPressed() {
-    if (key === ' ' && !pause)
-        bird.up()
-    if (key === 'p' || key === 'P')
+    if (keyCode === UP_ARROW && !pause) {
+        bird.up();
+        return;
+    }
+    
+    if (keyCode === DOWN_ARROW && !pause) {
+        bird.down();
+        return;
+    }
+
+    if (keyCode === R_KEY) {
+        restartGame();
+        return;
+    }
+
+    if (keyCode === P_KEY) {
         togglePause();
+        return;
+    }
 }
 
 function togglePause() {
+    if (!pause) {
+        // game was paused, now play again
+        pauseGame()
+    } else {
+        // game was on, now pause it
+        playGame()
+    }
     pause = !pause;
 }
 
 function showGameOver() {
     clearInterval(scoreCounter);
-    document.getElementById('display-msg').innerHTML = "Game Over!!!";
+    let el = document.getElementById('display-msg');
+    if (el)
+        el.innerHTML = "Game Over!!!";
+
+    onGameOverScreen = true;
 }
 
 function reset() {
-    pause = false;
-    gameIsEnded = false;
+    pause = true;
+    isGameOver = false;
+    onGameOverScreen = false;
     pipes = [];
-
     bird = new Bird(birdConfig);
     gameBg = new Background(gameConfig);
+    clearInterval(scoreCounter);
+    score = 0;
+
+    let el = document.getElementById('display-msg');
+    if (el)
+        el.innerHTML = "";
+}
+
+function restartGame() {
+    reset();
+    clearInterval(scoreCounter);
+    scoreCounter = setInterval(incrementScore, 1000);
+}
+
+function playGame() {
+    let scoreEl = document.getElementsByClassName("score")[0];
+    if (scoreEl)
+        scoreEl.classList.remove("blinking");
+    
+    clearInterval(scoreCounter);
+    scoreCounter = setInterval(incrementScore, 1000);
+}
+
+function pauseGame() {
+    let scoreEl = document.getElementsByClassName("score")[0]
+    if (scoreEl && !isGameOver)
+        scoreEl.classList.add("blinking");
+
+    clearInterval(scoreCounter);
+}
+
+function incrementScore() {
+    if (!pause && !isGameOver) {
+        score += 10
+    }
+    document.getElementById("score").innerHTML = `${score}`;
 }

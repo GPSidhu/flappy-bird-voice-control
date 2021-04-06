@@ -2,13 +2,14 @@ function Bird(config) {
     this.y = height/2;
     this.x = width/2 - 100;
     this.gravity = 0.7;
-    this.lift = -18;
+    this.lift = -12;
     this.velocity = 0;
     this.hasHit = false;
     this.height = 64;
     this.width = 64;
     this.img = config.image;
     this.gif = birdGif
+    this.gameVersion = config.gameConfig.version
 
     this.show = function(pause, isGameEnded) {
         if (isGameEnded) {
@@ -22,8 +23,20 @@ function Bird(config) {
     }
 
     this.up = function() {
-        console.log('up called')
-        this.velocity += this.lift;
+        switch(this.gameVersion) {
+            case 1: this.velocity += this.lift;
+                    break;
+            case 2: this.y -= 20;
+                    break;
+            default: //
+        }
+    }
+    this.down = function() {
+        switch(this.gameVersion) {
+            case 2: this.y += 20;
+                    break;
+            default: //
+        }
     }
 
     this.hasHit = function() {
@@ -35,7 +48,7 @@ function Bird(config) {
     }
 
     this.update = function(isPaused) {
-        if (!isPaused) {
+        if (!isPaused && gameVersion === 1) {
             this.velocity += this.gravity;
             this.velocity *= 0.9;
             this.y += this.velocity;

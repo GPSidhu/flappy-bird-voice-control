@@ -11,7 +11,7 @@
         display: flex;
       }
       body {
-        background-color: lightgray;
+        background-color: darkgray;
         font-size: 20px;
         color: #fff;
         grid-template-columns: auto auto;
@@ -43,33 +43,166 @@
         width: 48px;
         height: 48px;
       }
+      .game-container .panel .score {
+        font-size: 32px;
+        color: #fff;
+      }
+
+      #play {
+        display: block;
+      }
+
+      #pause {
+        display: none;
+      }
+
       .model-container {
         border: 1px solid black;
+        background-color: lightgray;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        justify-content: center;
+        align-items: center;
       }
-      
+      #console {
+        font-size: 24px;
+        color: #000;
+      }
+      .model-container > * {
+        padding: 6px;
+      }
+
+      .model-container .btn {
+        width: 64px;
+        height: 64px;
+      }
+      /* Tooltip container */
+      .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+      }
+
+      /* Tooltip text */
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        padding: 5px 0;
+        border-radius: 6px;
+
+        /* Position the tooltip text */
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -60px;
+
+        /* Fade in tooltip */
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      /* Tooltip arrow */
+      .tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+      }
+
+      /* Show the tooltip text when you mouse over the tooltip container */
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .game-over {
+        color: red;
+      }
+      .blinking{
+          animation:blinkingText 1.2s infinite;
+      }
+      .listening {
+        animation: blinkingBtn 1.2s infinite;
+      }
+      @keyframes blinkingText{
+          0%{     color: red;    }
+          49%{    color: red; }
+          60%{    color: transparent; }
+          99%{    color:transparent;  }
+          100%{   color: red;    }
+      }
+      @keyframes blinkingBtn{
+          0%{     opacity: 1;    }
+          20%{    opacity: 0.8; }
+          40%{    opacity: 0.6; }
+          50%{    opacity: 0.3; }
+          60%{    opacity: 0.6; }
+          80%{    opacity: 0.8; }
+          /* 99%{    opacity:0.6;  } */
+          100%{   opacity: 1;    }
+      }
     </style>
   </head>
   <body>
     <div class="game-container" id="game-container">
-      
       <div class="panel">
-        <h1 id="score"></h1>
-        <input type="image" id="reload" src="images/reload.png" />
-        <h2 id="display-msg"></h2>
+        <div class="score">
+          <span>Score:</span>
+          <span id="score">0</span>
+        </div>
+        <br/>
+        <div class="controls">
+          <div class="tooltip">
+            <input type="image" id="play" src="images/controls/paused.png" />
+            <span class="tooltiptext">Play ('P')</span>
+          </div>
+          <div class="tooltip">
+            <input type="image" id="pause" src="images/controls/playing.png" />
+            <span class="tooltiptext">Pause ('P')</span>
+          </div>
+          <div class="tooltip">
+            <input type="image" id="reload" src="images/controls/reload.png" />
+            <span class="tooltiptext">Restart</span>
+          </div>
+          
+        </div>
+        <h2 id="display-msg" class="game-over"></h2>
         <!-- <button style="background: url('images/reload.png')" ></button> -->
       </div>
     </div>
     <div class="model-container">
-      <div>Train the model</div>
-      <button id="up" onmousedown="collect(0)" onmouseup="collect(null)">Up</button>
-      <button id="right" onmousedown="collect(1)" onmouseup="collect(null)">Right</button>
-      <button id="noise" onmousedown="collect(2)" onmouseup="collect(null)">Noise</button>
-      <br/><br/>
-      <button id="train" onclick="train()">Train</button>
-      <br/><br/>
-      <button id="listen" onclick="listen()">Listen</button>
-      <input type="range" id="output" min="0" max="10" step="0.1">
+      <div>You said: </div>
       <div id="console"></div>
+      <!-- <div>Train the model</div> -->
+      <!-- <div class="up">
+        <button id="up" onmousedown="collect(0)" onmouseup="collect(null)">Up</button>
+        <div id="console"></div>
+      </div>
+      <div class="noise">
+        <button id="noise" onmousedown="collect(2)" onmouseup="collect(null)">Noise</button>
+      </div>
+      <div class="train">
+        <button id="train" onclick="train()">Train</button>
+      </div> -->
+      <br/>
+      <div class="tooltip listening">
+        <input id="voice" class="btn" type="image" src="images/controls/microphone.png" />
+        <span class="tooltiptext">Click to enable voice control</span>
+      </div>
+      <!-- <div class="listen">
+        <button id="listen" onclick="predictWord()">Use Voice control</button>
+      </div> -->
+      <!-- <input type="range" id="output" min="0" max="10" step="0.1"> -->
+      
     </div>
 
     <script src="index.js" type="text/javascript"></script>
