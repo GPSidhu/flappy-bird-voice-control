@@ -1,3 +1,11 @@
+const VERSION = {
+    WITH_GRAVITY: 1,
+    WITHOUT_GRAVITY: 2
+}
+const MODE = {
+    ACTION: 'action',
+    TRIAL: 'trial'
+}
 var bird, birdImg, birdGif, birdConfig;
 var controller;
 var pipes = [], pipeConfig; 
@@ -8,31 +16,30 @@ let onGameOverScreen = false;
 let playButton;
 let score = 0;
 let gameMode = 'action'; //'trial','action'
-let gameVersion = 1; //1 -> with gravity, 2 -> without gravity
-var scoreCounter;
+let gameVersion = VERSION.WITH_GRAVITY; //1 -> with gravity, 2 -> without gravity
 
+var scoreCounter;
+let isMicOn = false;
 const P_KEY = 80;
 const R_KEY = 82;
 
 document.getElementById("play").addEventListener("click", (e) => {
-    let pauseBtn = document.getElementById('pause');
-    if (pauseBtn) {
-        pauseBtn.style.display = "block";
-        e.target.style.display = "none";
-    }
     togglePause()
 });
 
 document.getElementById("pause").addEventListener("click", (e) => {
-    let playBtn = document.getElementById('play');
-    if (playBtn) {
-        playBtn.style.display = "block";
-        e.target.style.display = "none";
-    }
     togglePause();
 });
 
+document.getElementById("voice").addEventListener("click", (e) => {
+    toggleVoiceControl(e)
+});
+
 document.getElementById("reload").addEventListener("click", restartGame);
+
+document.getElementById("gravity-enabled").addEventListener("click", disableGravity);
+
+document.getElementById("gravity-disabled").addEventListener("click", enableGravity);
 
 function preload() {
     gameConfig = {
@@ -129,10 +136,10 @@ function keyPressed() {
 
 function togglePause() {
     if (!pause) {
-        // game was paused, now play again
+        // game was on, now pause it
         pauseGame()
     } else {
-        // game was on, now pause it
+        // game was on, now play again
         playGame()
     }
     pause = !pause;
@@ -166,6 +173,7 @@ function restartGame() {
     reset();
     clearInterval(scoreCounter);
     scoreCounter = setInterval(incrementScore, 1000);
+    showPlayBtn();
 }
 
 function playGame() {
@@ -175,6 +183,18 @@ function playGame() {
     
     clearInterval(scoreCounter);
     scoreCounter = setInterval(incrementScore, 1000);
+    // show pause button
+    if (!isGameOver)
+        showPauseBtn();
+}
+
+function showPlayBtn() {
+    let playBtn = document.getElementById('play');
+    let pauseBtn = document.getElementById('pause');
+    if (playBtn) {
+        playBtn.style.display = "block";
+        pauseBtn.style.display = "none";
+    }
 }
 
 function pauseGame() {
@@ -183,6 +203,18 @@ function pauseGame() {
         scoreEl.classList.add("blinking");
 
     clearInterval(scoreCounter);
+    // show play button
+    if (!isGameOver)
+        showPlayBtn();
+}
+
+function showPauseBtn() {
+    let pauseBtn = document.getElementById('pause');
+    let playBtn = document.getElementById('play')
+        if (pauseBtn) {
+            pauseBtn.style.display = "block";
+            playBtn.style.display = "none";
+        }
 }
 
 function incrementScore() {
@@ -190,4 +222,55 @@ function incrementScore() {
         score += 10
     }
     document.getElementById("score").innerHTML = `${score}`;
+}
+
+function toggleVoiceControl(e) {
+    if (!isGameOver) {
+        if (!isMicOn) { //mic is off, enable it
+            enableVoiceControl(e)
+        } else {
+            // disable mic
+            disableVoiceControl(e)
+        }
+    }
+}
+
+function enableVoiceControl(e) {
+    if (e && e.target)
+        e.target.classList.add("listening");
+
+    document.getElementById("mic-tooltip").innerHTML = "Disable Voice Control";
+    document.getElementById("listening-txt").style.display = "block";
+    listen();
+    isMicOn = true;
+}
+
+function disableVoiceControl(e) {
+    if (e && e.target)
+        e.target.classList.remove("listening");
+
+    stopListening();
+    document.getElementById("mic-tooltip").innerHTML = "Enable Voice Control";
+    document.getElementById("listening-txt").style.display = "none";
+    document.querySelector('#console').textContent = '';
+    isMicOn = false;
+}
+
+function enableGravity() {
+    document.getElementById('gravity-enabled').style.display = "block";
+    document.getElementById('gravity-disabled').style.display = "none";
+    updateGameVersion(VERSION.WITH_GRAVITY);
+}
+
+function disableGravity() {
+    document.getElementById('gravity-enabled').style.display = "none";
+    document.getElementById('gravity-disabled').style.display = "block";
+    updateGameVersion(VERSION.WITHOUT_GRAVITY)
+}
+
+function updateGameVersion(version) {
+    gameConfig.version = version;
+    gameVersion = version;
+    if (bird)
+        bird.setGameVersion(version);
 }

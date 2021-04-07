@@ -39,6 +39,14 @@ function Bird(config) {
         }
     }
 
+    this.getGameVersion = function() {
+        return this.gameVersion
+    }
+
+    this.setGameVersion = function(version) {
+        this.gameVersion = version;
+    }
+
     this.hasHit = function() {
         return this.hasHit;
     }
