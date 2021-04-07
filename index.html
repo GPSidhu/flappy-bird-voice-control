@@ -17,6 +17,17 @@
         grid-template-columns: auto auto;
         grid-gap: 10px;
       }
+      .banner {
+        background-color: lightgray;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        color: black;
+      }
+      .banner > * {
+        margin: 8px 8px;
+      }
       .game-container {
         background-color: black;
         border: 1px solid black;
@@ -48,11 +59,22 @@
         color: #fff;
       }
 
+      .game-container .btn {
+        outline: none;
+      }
+      .game-container .controls .row {
+        display: flex;
+      }
+    
       #play {
         display: block;
       }
 
       #pause {
+        display: none;
+      }
+
+      #gravity-disabled {
         display: none;
       }
 
@@ -76,7 +98,54 @@
       .model-container .btn {
         width: 64px;
         height: 64px;
+        outline: none;
       }
+
+      .game-over {
+        color: red;
+      }
+      .blinking{
+          animation:blinkingText 1.2s infinite;
+      }
+      .listening {
+        animation: blinkingBtn 1.2s infinite;
+      }
+      #listening-txt {
+        display: none;
+        padding-right: 8px;
+      }
+
+      .model-container .listening-wrapper {
+        font-size: 48px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        color: black; 
+      }
+
+      #console {
+        color: green;
+        font-size: 48px;
+      }
+
+      @keyframes blinkingText{
+          0%{     color: red;    }
+          49%{    color: red; }
+          60%{    color: transparent; }
+          99%{    color:transparent;  }
+          100%{   color: red;    }
+      }
+      @keyframes blinkingBtn{
+          0%{     opacity: 1;    }
+          20%{    opacity: 0.8; }
+          40%{    opacity: 0.6; }
+          50%{    opacity: 0.3; }
+          60%{    opacity: 0.6; }
+          80%{    opacity: 0.8; }
+          100%{   opacity: 1;   }
+      }
+
       /* Tooltip container */
       .tooltip {
         position: relative;
@@ -124,34 +193,14 @@
         opacity: 1;
       }
 
-      .game-over {
-        color: red;
-      }
-      .blinking{
-          animation:blinkingText 1.2s infinite;
-      }
-      .listening {
-        animation: blinkingBtn 1.2s infinite;
-      }
-      @keyframes blinkingText{
-          0%{     color: red;    }
-          49%{    color: red; }
-          60%{    color: transparent; }
-          99%{    color:transparent;  }
-          100%{   color: red;    }
-      }
-      @keyframes blinkingBtn{
-          0%{     opacity: 1;    }
-          20%{    opacity: 0.8; }
-          40%{    opacity: 0.6; }
-          50%{    opacity: 0.3; }
-          60%{    opacity: 0.6; }
-          80%{    opacity: 0.8; }
-          100%{   opacity: 1;    }
-      }
     </style>
   </head>
   <body>
+    <div class="banner">
+      <h2>Flappy Bird with Voice Control</h2>
+      <h4>No microphone!! No issues, you can still enjoy the game using keyboard. </h4>
+      <!-- <h4>Use "Up arrow" => to control bird "P" => Pause/Play, R => Restart</h4> -->
+    </div>
     <div class="game-container" id="game-container">
       <div class="panel">
         <div class="score">
@@ -160,41 +209,43 @@
         </div>
         <br/>
         <div class="controls">
-          <div class="tooltip">
-            <input type="image" id="play" src="images/controls/paused.png" />
-            <span class="tooltiptext">Play ('P')</span>
+          <div class="row">
+            <div class="tooltip">
+              <input type="image" id="play" src="images/controls/paused.png" />
+              <span class="tooltiptext">Play ('P')</span>
+            </div>
+            <div class="tooltip">
+              <input type="image" id="pause" src="images/controls/playing.png" />
+              <span class="tooltiptext">Pause ('P')</span>
+            </div>
+            <div class="tooltip">
+              <input type="image" id="reload" src="images/controls/reload.png" />
+              <span class="tooltiptext">Restart</span>
+            </div>
           </div>
-          <div class="tooltip">
-            <input type="image" id="pause" src="images/controls/playing.png" />
-            <span class="tooltiptext">Pause ('P')</span>
+          <div class="row">
+            <div class="tooltip">
+              <input type="image" id="gravity-disabled" src="images/controls/earth-red.png" />
+              <span class="tooltiptext">Enable Gravity</span>
+            </div>
+            <div class="tooltip">
+              <input type="image" id="gravity-enabled" src="images/controls/earth.png" />
+              <span class="tooltiptext">Disable Gravity</span>
+            </div>
           </div>
-          <div class="tooltip">
-            <input type="image" id="reload" src="images/controls/reload.png" />
-            <span class="tooltiptext">Restart</span>
-          </div>
-          
         </div>
         <h2 id="display-msg" class="game-over"></h2>
       </div>
     </div>
     <div class="model-container">
-      <div>You said: </div>
-      <div id="console"></div>
-      <!-- <div>Train the model</div> -->
-      <!-- <div class="up">
-        <button id="up" onmousedown="collect(0)" onmouseup="collect(null)">Up</button>
-        <div id="console"></div>
-      </div>
-      <div class="noise">
-        <button id="noise" onmousedown="collect(2)" onmouseup="collect(null)">Noise</button>
-      </div>
-      <div class="train">
-        <button id="train" onclick="train()">Train</button>
-      </div> -->
+        <div class="listening-wrapper">
+          <span id="listening-txt">Listening... </span>
+          <div id="console"></div>
+        </div>
       <br/>
-      <div class="tooltip listening">
-        <input id="voice" class="btn" type="image" src="images/controls/microphone.png" />
-        <span class="tooltiptext">Click to enable voice control</span>
+      <div class="tooltip">
+        <input id="voice" tabindex="-1" class="btn" type="image" src="images/controls/microphone.png" />
+        <span id="mic-tooltip" class="tooltiptext">Enable voice control</span>
       </div>
       <!-- <div class="listen">
         <button id="listen" onclick="predictWord()">Use Voice control</button>
@@ -204,10 +255,9 @@
     </div>
 
     <script src="index.js" type="text/javascript"></script>
-    <script src="./objects/tree.js" type="text/javascript"></script>
     <script src="./objects/background.js" type="text/javascript"></script>
     <script src="/objects/bird.js" type="text/javascript"></script>
     <script src="/objects/pipe.js" type="text/javascript"></script>
-    <script src="speech-engine.js" type="text/javascript"></script>
+    <script src="speech-controller.js" type="text/javascript"></script>
   </body>
 </html>
