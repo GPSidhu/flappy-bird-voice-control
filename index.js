@@ -1,11 +1,4 @@
-const VERSION = {
-    WITH_GRAVITY: 1,
-    WITHOUT_GRAVITY: 2
-}
-const MODE = {
-    ACTION: 'action',
-    TRIAL: 'trial'
-}
+
 var bird, birdImg, birdGif, birdConfig;
 var controller;
 var pipes = [], pipeConfig; 
@@ -17,6 +10,9 @@ let playButton;
 let score = 0;
 let gameMode = 'action'; //'trial','action'
 let gameVersion = VERSION.WITH_GRAVITY; //1 -> with gravity, 2 -> without gravity
+let difficulty;
+let speed;
+let lift;
 
 var scoreCounter;
 let isMicOn = false;
@@ -49,7 +45,8 @@ function preload() {
             width: 600,
         },
         mode: gameMode,
-        version: gameVersion
+        version: gameVersion,
+        speed: 2
     }
     pipeConfig = {
         image: {
@@ -94,7 +91,8 @@ function draw() {
 }
 
 function drawPipes() {
-    if (frameCount % 100 === 0 && !pause)
+    // as speed increases, frameCount decreases
+    if (frameCount % (SPEED_FRAMECOUNT__MAP[gameConfig.speed]) === 0 && !pause)
     pipes.push(new Pipe(pipeConfig))
 
     for (let i = pipes.length - 1; i >= 0; i--) {
@@ -273,4 +271,14 @@ function updateGameVersion(version) {
     gameVersion = version;
     if (bird)
         bird.setGameVersion(version);
+}
+
+function updateGameSpeed(speed) {
+    gameConfig.speed = speed;
+}
+
+let speedSlider = document.getElementById("speed-slider");
+speedSlider.oninput = function() {
+    updateGameSpeed(this.value);
+    console.log('speed increased: '+this.value)
 }

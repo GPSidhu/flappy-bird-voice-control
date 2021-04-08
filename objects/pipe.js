@@ -1,19 +1,32 @@
 function Pipe(config) {
     this.minHeight = 0;
-    this.minGap = 100; // minimum gap between top and bottom pipes
-    this.maxGap = 350; // maximum gap between top and bottom pipes
+    this.minGap = 150; // minimum gap between top and bottom pipes
+    this.maxGap = 250; // maximum gap between top and bottom pipes
     this.gap = random(this.minGap,  this.maxGap);
-    this.bottom = random(100, height/2 - 100);
+    this.bottom = random(50, height * 3/4);
+
+    // hard: random(50, height - height*0.10);
+    //more difficult : random(50, height - height*0.25);
+    // less difficult: random(50, height - height*0.3);
+    // very less difficult: random(50, height - height*0.4);
     this.top = (height - this.bottom - this.gap); //random(100, height/2);
     this.x = width;
     this.w = 90;
-    this.speed = 2;
+    this.speed = config.gameConfig ? config.gameConfig.speed : 1;
     this.baseWidth = 100;
     this.baseHeight = 30;
     this.topImg = config.image.top;
     this.bottomImg = config.image.bottom;
     this.mode = config.gameConfig.mode;
     
+
+    this.getSpeed = function() {
+        return this.speed;
+    }
+
+    this.setSpeed = function(speed) {
+        this.speed = speed;
+    }
 
     this.show = function() {
         // Bottom pipe
