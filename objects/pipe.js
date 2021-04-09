@@ -1,9 +1,9 @@
 function Pipe(config) {
     this.minHeight = 0;
-    this.minGap = 150; // minimum gap between top and bottom pipes
-    this.maxGap = 250; // maximum gap between top and bottom pipes
+    this.minGap = config.minGap; //150; // minimum gap between top and bottom pipes
+    this.maxGap = config.maxGap; //250; // maximum gap between top and bottom pipes
     this.gap = random(this.minGap,  this.maxGap);
-    this.bottom = random(50, height * 3/4);
+    this.bottom = random(50, height * config.hFactor);
 
     // hard: random(50, height - height*0.10);
     //more difficult : random(50, height - height*0.25);
@@ -42,7 +42,7 @@ function Pipe(config) {
     }
 
     this.hits = function(bird) {
-        if (this.mode === 'trial')
+        if (this.mode === MODE.TRIAL)
             return false;
 
         if (bird.y >= height - bird.height) {

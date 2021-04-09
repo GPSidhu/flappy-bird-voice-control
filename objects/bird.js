@@ -2,7 +2,7 @@ function Bird(config) {
     this.y = height/2;
     this.x = width/2 - 100;
     this.gravity = 0.7;
-    this.lift = -14;
+    this.lift = -config.lift;
     this.velocity = 0;
     this.hasHit = false;
     this.height = 64;
@@ -26,14 +26,14 @@ function Bird(config) {
         switch(this.gameVersion) {
             case 1: this.velocity += this.lift;
                     break;
-            case 2: this.y -= 20;
+            case 2: this.y += Math.floor(this.lift * 2);
                     break;
             default: //
         }
     }
     this.down = function() {
         switch(this.gameVersion) {
-            case 2: this.y += 20;
+            case 2: this.y -= Math.floor(this.lift * 2);
                     break;
             default: //
         }
@@ -45,6 +45,14 @@ function Bird(config) {
 
     this.setGameVersion = function(version) {
         this.gameVersion = version;
+    }
+
+    this.getLift = function() {
+        return this.lift;
+    }
+
+    this.setLift = function(lift) {
+        this.lift = -lift;
     }
 
     this.hasHit = function() {

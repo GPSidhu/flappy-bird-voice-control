@@ -34,3 +34,36 @@ async function app() {
 }
 
 app()
+
+
+function toggleVoiceControl(e) {
+  if (!isGameOver) {
+      if (!isMicOn) { //mic is off, enable it
+          enableVoiceControl(e)
+      } else {
+          // disable mic
+          disableVoiceControl(e)
+      }
+  }
+}
+
+function enableVoiceControl(e) {
+  if (e && e.target)
+      e.target.classList.add("listening");
+
+  document.getElementById("mic-tooltip").innerHTML = "Disable Voice Control";
+  document.getElementById("listening-txt").style.display = "block";
+  listen();
+  isMicOn = true;
+}
+
+function disableVoiceControl(e) {
+  if (e && e.target)
+      e.target.classList.remove("listening");
+
+  stopListening();
+  document.getElementById("mic-tooltip").innerHTML = "Enable Voice Control";
+  document.getElementById("listening-txt").style.display = "none";
+  document.querySelector('#console').textContent = '';
+  isMicOn = false;
+}
